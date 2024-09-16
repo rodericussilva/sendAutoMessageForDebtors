@@ -1,0 +1,12 @@
+2024-09-13 13:38:30.242853 - Mensagem enviada com sucesso para Rodrigo Silva (+5585981618657).
+2024-09-13 14:10:26.301946 - Mensagem enviada com sucesso para Rodrigo Silva (+5585981618657).
+2024-09-13 14:10:58.154435 - Mensagem enviada com sucesso para Usuário Teste (+5585998410112).
+2024-09-13 14:23:44.435567 - Mensagem enviada com sucesso para Rodrigo Silva (+5585981618657).
+2024-09-13 14:24:24.972518 - Mensagem enviada com sucesso para Usuário Teste (+5585998410112).
+2024-09-13 14:36:43.810590 - Mensagem enviada com sucesso para Rodrigo Silva (+5585981618657).
+2024-09-13 14:37:18.006746 - Mensagem enviada com sucesso para Usuário Teste (+5585998410112).
+2024-09-13 14:49:30.335016 - Mensagem enviada com sucesso para Rodrigo Silva (+5585981618657).
+2024-09-13 15:01:43.880634 - Mensagem enviada com sucesso para Usuário Teste (+5585998410112).
+2024-09-16 10:39:36.471461 - Mensagem enviada com sucesso para Usuário Teste (+5585998410112).
+2024-09-16 14:16:36.984968 - Mensagem enviada com sucesso para Rodrigo Silva (5585981618657).
+2024-09-16 14:17:13.019698 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
