@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
+from PIL import Image, ImageTk
 from datetime import datetime
 from main import main
 from rescheduling import load_rescheduling, save_rescheduling
@@ -101,10 +102,14 @@ root.title("Sistema de Cobrança Automatizado")
 
 #logo = tk.PhotoImage(file="images/logo.png")
 
-#label_logo = tk.Label(root, image=logo, bg='#04488E')
-#label_logo.place(x=0, y=0)
+logo_image = Image.open("images/logo.png")
+logo_image = logo_image.resize((150, 130))
+logo = ImageTk.PhotoImage(logo_image)
 
-root.geometry("560x460")
+label_logo = tk.Label(root, image=logo, bg='#04488E')
+label_logo.pack(pady=10)
+
+root.geometry("760x650")
 
 title = tk.Label(root, text="Automação de Cobrança", font=("Helvetica", 16), bg='#04488E', fg='white')
 title.pack(pady=10)
@@ -151,9 +156,17 @@ table.heading("Telefone", text="Telefone")
 table.heading("Data de Reagendamento", text="Data de Reagendamento")
 
 #tamanho das colunas
-table.column("Nome", width=150)
-table.column("Telefone", width=150)
-table.column("Data de Reagendamento", width=150)
+table.column("Nome", width=150, anchor="center")
+table.column("Telefone", width=150, anchor="center")
+table.column("Data de Reagendamento", width=150, anchor="center")
+
+#configura tag para centralizar texto
+table.tag_configure('center', anchor='center')
+
+#aplica a tag as linhas
+def insert_centered_item(*args, **kwargs):
+    item = table.insert(*args, **kwargs)
+    table.item(item, tags=('center',))
 
 #exibe tabela
 table.pack(pady=10)
