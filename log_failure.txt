@@ -1,0 +1,1 @@
+2024-09-17 09:27:30.776759 - Falha ao enviar mensagem para Usuário Teste (5585998410112): record_success() missing 1 required positional argument: 'number'

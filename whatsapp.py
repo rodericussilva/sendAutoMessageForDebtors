@@ -39,7 +39,7 @@ def send_messages(browser, customers):
         number = curstomer['number']
         days_late = curstomer['days_late']
 
-        if check_reschedule(id):
+        if check_reschedule(name=name, number=number):
             print(f'Cliente {name} reagendado, ignorando até nova data')
             continue
 
@@ -57,7 +57,7 @@ def send_messages(browser, customers):
             send_button.click()
             time.sleep(10)
 
-            record_success(id, name, number)
+            record_success(name, number)
 
         except Exception as e:
             record_failure(id, name, number, str(e))

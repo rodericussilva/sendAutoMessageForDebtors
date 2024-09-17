@@ -21,16 +21,15 @@ def save_rescheduling(rescheduling):
     with open(RESCHEDULING_FILE, 'w') as file:
         json.dump({"reagendamentos": rescheduling}, file, indent=4)
 
-def check_reschedule(id):
+def check_reschedule(name=None, number=None):
     """
-    Verifica se o cliente está reagendado e deve ser ignorado até a nova data.
-
-    :param id_cliente: ID do cliente
+    Verifica se há reagendado e se deve ser ignorado até nova data.
+    
     :return: True se o cliente estiver reagendado, False caso contrário
     """
     rescheduling = load_rescheduling()
     for reagendamento in rescheduling:
-        if reagendamento['id'] == id:
+        if (name and reagendamento.get('name') == name) or (number and reagendamento.get('number') == number):
             new_date = datetime.strptime(reagendamento['nova_data_reagendamento'], '%Y-%m-%d').date()
             if new_date > datetime.now().date():
                 return True
