@@ -1,9 +1,3 @@
 {
-    "reagendamentos": [
-        {
-            "name": "Rodrigo Silva",
-            "number": "5585981618657",
-            "new_date_reschedule": "2024-09-17"
-        }
-    ]
+    "reagendamentos": []
 }

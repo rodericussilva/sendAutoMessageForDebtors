@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 from datetime import datetime
 from main import main
 from rescheduling import load_rescheduling, save_rescheduling
+from database import check_payment_status
 
 def start_system():
     messagebox.showinfo("Iniciar", "Sitema de envio de mensagens iniciado.")
@@ -64,6 +65,7 @@ def reschedule_customer():
 
 def update_reschedule_table():
     rescheduling = load_rescheduling()
+    rescheduling_updated = []
 
     #list_reschedules.delete(0, tk.END)
 
@@ -74,16 +76,19 @@ def update_reschedule_table():
         name = reschedule['name']
         number = reschedule['number']
         date_reschedule = datetime.strptime(reschedule['new_date_reschedule'], "%Y-%m-%d").date()
+            
+        if check_payment_status(name_customer=name, number_customer=number):
+            print(f"Cliente {name} pagou o boleto, removendo da lista.")
+            continue
 
         if date_reschedule >= datetime.now().date():
             table.insert("", "end", values=(name, number, date_reschedule))
-        else:
-            rescheduling.remove(reschedule)
-    save_rescheduling(rescheduling)
+            rescheduling_updated.append(reschedule)
+    save_rescheduling(rescheduling_updated)
 
 def check_expired_schedules():
     update_reschedule_table()
-    root.after(3000, check_expired_schedules)
+    root.after(60000, check_expired_schedules)
 
 def remove_reschedule_if_paid(name_customer=None, number_customer=None):
     rescheduling = load_rescheduling()

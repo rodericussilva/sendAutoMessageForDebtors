@@ -36,3 +36,37 @@ def search_debtors():
         for row in results
     ]
     return customers
+
+def check_payment_status(name_customer=None, number_customer=None):
+    """
+    Verifica no banco de dados se o boleto do cliente foi pago.
+    :return: True se o boleto foi pago, False caso contrário
+    """
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT b.status
+        FROM clientes c
+        JOIN boletos b ON c.id = b.id_cliente
+        WHERE b.status = 'pago'
+    """
+    
+    conditions = []
+    if name_customer:
+        conditions.append("c.nome = ?")
+    if number_customer:
+        conditions.append("c.telefone = ?")
+    
+    if conditions:
+        query += " AND (" + " OR ".join(conditions) + ")"
+
+    parameters = [param for param in (name_customer, number_customer) if param]
+    cursor.execute(query, parameters)
+    
+    result = cursor.fetchone()
+    conn.close()
+
+    if result and result[0] == 'pago':
+        return True
+    return False
