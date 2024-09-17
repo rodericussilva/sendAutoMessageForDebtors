@@ -57,7 +57,7 @@ def send_messages(browser, customers):
             send_button.click()
             time.sleep(10)
 
-            record_success(name, number)
+            record_success(id, name, number)
 
         except Exception as e:
             record_failure(id, name, number, str(e))

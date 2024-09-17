@@ -33,6 +33,8 @@ def reschedule_customer():
     
     rescheduling = load_rescheduling()
 
+    update_reschedule_table()
+
     customer_scheduled = False
 
     for reschedule in rescheduling:
