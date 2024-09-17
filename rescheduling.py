@@ -30,7 +30,7 @@ def check_reschedule(name=None, number=None):
     rescheduling = load_rescheduling()
     for reagendamento in rescheduling:
         if (name and reagendamento.get('name') == name) or (number and reagendamento.get('number') == number):
-            new_date = datetime.strptime(reagendamento['nova_data_reagendamento'], '%Y-%m-%d').date()
+            new_date = datetime.strptime(reagendamento['new_date_reschedule'], '%Y-%m-%d').date()
             if new_date > datetime.now().date():
                 return True
     return False

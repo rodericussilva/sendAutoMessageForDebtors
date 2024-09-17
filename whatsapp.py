@@ -33,31 +33,34 @@ def send_messages(browser, customers):
                 raise
             time.sleep(10)
 
-    for curstomer in customers:
-        id = curstomer['id']
-        name = curstomer['name']
-        number = curstomer['number']
-        days_late = curstomer['days_late']
+    for customer in customers:
+        id = customer['id']
+        name = customer['name']
+        number = customer['number']
+        days_late = customer['days_late']
 
-        if check_reschedule(name=name, number=number):
-            print(f'Cliente {name} reagendado, ignorando até nova data')
-            continue
+        if days_late >= 6:
+            if check_reschedule(name=name, number=number):
+                print(f'Cliente {name} reagendado, ignorando até nova data')
+                continue
 
-        # Mensagem de cobrança - ver como ficará
-        message = f'Olá {name}, \nO seu pagamento está em atraso há {days_late} dias. Por favor, regularize sua situação respondendo a esta mensagem. \nAtenciosamente, \nFinanceiro TS Distribuidora.'
-        quote = urllib.parse.quote_plus(message)
-        url = f'https://web.whatsapp.com/send?phone={number}&text={quote}'
+            # Mensagem de cobrança - ver como ficará
+            message = f'Olá {name}, \nO seu pagamento está em atraso há {days_late} dias. Por favor, regularize sua situação respondendo a esta mensagem. \nAtenciosamente, \nFinanceiro TS Distribuidora.'
+            quote = urllib.parse.quote_plus(message)
+            url = f'https://web.whatsapp.com/send?phone={number}&text={quote}'
 
-        try:
-            print(f'Enviando mensagem para {name} ({number})')
-            browser.get(url)
-            send_button = WebDriverWait(browser, 40).until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
-            time.sleep(10)
-            browser.execute_script("arguments[0].scrollIntoView();", send_button)
-            send_button.click()
-            time.sleep(10)
+            try:
+                print(f'Enviando mensagem para {name} ({number})')
+                browser.get(url)
+                send_button = WebDriverWait(browser, 40).until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
+                time.sleep(10)
+                browser.execute_script("arguments[0].scrollIntoView();", send_button)
+                send_button.click()
+                time.sleep(10)
 
-            record_success(id, name, number)
+                record_success(id, name, number)
 
-        except Exception as e:
-            record_failure(id, name, number, str(e))
+            except Exception as e:
+                record_failure(id, name, number, str(e))
+        else:
+            print(f'Cliente {name} com {days_late} dias de atraso. Mensagens enviadas apenas depois de 6 dias de atraso')
