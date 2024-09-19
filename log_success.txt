@@ -17,3 +17,32 @@
 2024-09-17 14:36:48.396924 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
 2024-09-17 14:50:03.028951 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
 2024-09-17 14:53:56.848975 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-17 15:05:27.505443 - Mensagem enviada com sucesso para Rodrigo Silva (5585981618657).
+2024-09-17 15:06:01.498143 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-17 15:09:01.844332 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 09:44:03.259375 - Mensagem enviada com sucesso para Rodrigo Silva (5585981618657).
+2024-09-19 09:44:41.679923 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 13:49:09.621315 - Mensagem enviada com sucesso para Rodrigo Silva (5585981618657).
+2024-09-19 13:49:49.123147 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 13:50:12.488148 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 13:54:42.108915 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 13:55:06.488316 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:00:53.119130 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:01:42.681096 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:03:44.548242 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:04:07.360822 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:06:25.955706 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:06:46.703452 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:09:42.954253 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:10:03.994654 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:24:35.165184 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:24:58.584432 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:34:31.762649 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:34:57.303688 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:37:53.160963 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:38:12.716243 - Mensagem enviada com sucesso para Teste < 3 dias (5585981618657).
+2024-09-19 14:44:20.122608 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:46:55.822130 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:55:55.827078 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 14:58:10.374436 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-19 15:03:26.361948 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).

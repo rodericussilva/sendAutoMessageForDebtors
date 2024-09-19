@@ -16,7 +16,7 @@ def search_debtors():
     conn = connect_db()
     cursor = conn.cursor()
     query = """
-        SELECT c.id, c.nome, c.telefone, b.dias_atrasados
+        SELECT c.id, c.nome, c.telefone, b.dias_atrasados, c.email
         FROM clientes c
         JOIN boletos b ON c.id = b.id_cliente
         WHERE b.status = 'vencido'
@@ -31,7 +31,8 @@ def search_debtors():
             'id': row.id,
             'name': row.nome,
             'number': row.telefone,
-            'days_late': row.dias_atrasados
+            'days_late': row.dias_atrasados,
+            'email': row.email
         }
         for row in results
     ]
