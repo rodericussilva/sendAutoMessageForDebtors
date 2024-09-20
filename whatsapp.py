@@ -1,4 +1,5 @@
-import requests
+import os
+from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -15,16 +16,36 @@ import time
 from rescheduling import check_reschedule
 from notifications import record_success, record_failure
 
-# Configuração de email
-SMTP_SERVER = 'smtp.office365.com'
-SMTP_PORT = 587
-EMAIL_LOGIN = 'analise@tsdistribuidora.com.br'
-EMAIL_PASSWORD = 'Ts2024$$'
-FINANCIAL_EMAIL = 'analise@tsdistribuidora.com.br'
+load_dotenv()
+
+SMTP_SERVER = os.getenv('SMTP_SERVER')
+SMTP_PORT = os.getenv('SMTP_PORT')
+EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+FINANCIAL_EMAIL = os.getenv('FINANCIAL_EMAIL')
+
+def critical_failure(error_message):
+    non_critical_errors = [
+        "no such window",
+        "no such element",
+        "element not interactable",
+        "timed out after x seconds waiting for element to be clickable",
+        "web view not found",
+        "stale element reference",
+        "unknown error",
+        "element click intercepted",
+        "is not clickable",
+        "Connection refused",
+    ]
+
+    for non_critical in non_critical_errors:
+        if non_critical in error_message.lower():
+            return False
+    return True
 
 def send_email(subject, body, recipient_email):
     if not recipient_email:
-        print("Email do destinatário está vazio, não será enviado.")
+        print("Erro ao obter email do destinatário, campo vazio.")
         return
 
     msg = MIMEMultipart()
@@ -64,7 +85,7 @@ def send_messages(browser, customers):
         name = customer['name']
         number = customer['number']
         days_late = customer['days_late']
-        email = customer.get('email')  # Obtém o email do cliente
+        email = customer.get('email')
 
         if days_late >= 3:
             if check_reschedule(name=name, number=number):
@@ -79,9 +100,8 @@ def send_messages(browser, customers):
                 print(f'Enviando mensagem para {name} ({number})')
                 browser.get(url)
 
-                # Tentativa de encontrar o botão de envio
                 send_button = None
-                for attempt in range(3):  # Tenta reencontrar o botão de envio até 3 vezes
+                for attempt in range(3):
                     try:
                         send_button = WebDriverWait(browser, 40).until(
                             EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]'))
@@ -89,29 +109,28 @@ def send_messages(browser, customers):
                         browser.execute_script("arguments[0].scrollIntoView();", send_button)
                         send_button.click()
                         time.sleep(10)
-                        break  # Se conseguir clicar, sai do loop
+                        break 
                     except StaleElementReferenceException:
                         print(f"O botão de envio expirou para {name}. Tentando novamente (tentativa {attempt + 1}/3)")
 
-                if not send_button:  # Se o botão não for encontrado ou clicado
+                if not send_button:
                     raise Exception("Número não é WhatsApp")
 
-                # Mensagem enviada com sucesso, registrar no log de sucesso
                 record_success(id, name, number)
 
             except Exception as e:
+                error_message = str(e)
                 print(f"Erro ao enviar mensagem para {name} ({number}): {str(e)}")
                 record_failure(id, name, number, str(e))
 
-                # Sempre que registrar uma falha, enviar email
-                email_subject = f"Notificação: WhatsApp não enviado - Falha ({name})"
-                email_body = f"O número {number} do cliente {name} apresentou um erro. Verifique se o número está correto, caso contrário, por favor entre em contato com o cliente e atualize o número na base de dados."
-                send_email(email_subject, email_body, FINANCIAL_EMAIL)
+                if critical_failure(error_message):
+                    email_subject = f"Notificação: WhatsApp não enviado - Falha ({name})"
+                    email_body = f"O número {number} do cliente {name} apresentou um erro. Verifique se o número está correto, caso contrário, por favor entre em contato com o cliente e atualize o número no cadastro."
+                    send_email(email_subject, email_body, FINANCIAL_EMAIL)
 
-                # Envia email diretamente ao cliente, se o email estiver disponível
-                if email:
-                    client_email_subject = "Notificação de atraso de pagamento"
-                    client_email_body = f"""
+                    if email:
+                        client_email_subject = "Notificação de atraso de pagamento"
+                        client_email_body = f"""
                     Olá {name},
 
                     Verificamos que o seu pagamento está em atraso há {days_late} dias.
@@ -121,9 +140,9 @@ def send_messages(browser, customers):
                     Atenciosamente, 
 
                     Financeiro TS Distribuidora.
-                    """
-                    send_email(client_email_subject, client_email_body, email)
-                else:
-                    print(f"Email do cliente {name} está vazio, não será enviado.")
+                        """
+                        send_email(client_email_subject, client_email_body, email)
+                    else:
+                        print(f"Email do cliente {name} está vazio, não será enviado.")
         else:
             print(f'Cliente {name} com {days_late} dias de atraso. Mensagens enviadas apenas depois de 6 dias de atraso.')

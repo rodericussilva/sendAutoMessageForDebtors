@@ -6,12 +6,16 @@ from main import main
 from rescheduling import load_rescheduling, save_rescheduling
 from database import check_payment_status
 
+browser = None
+
 def start_system():
     messagebox.showinfo("Iniciar", "Sitema de envio de mensagens iniciado.")
     main()
 
 def stop_system():
     messagebox.showinfo("Parar", "Sistema de envio de mensagens encerrado")
+    
+    root.quit()
 
 def reschedule_customer():
     name_customer = input_name.get()
@@ -119,11 +123,14 @@ root.geometry("760x650")
 title = tk.Label(root, text="Automação de Cobrança", font=("Helvetica", 16), bg='#04488E', fg='white')
 title.pack(pady=10)
 
+button_frame = tk.Frame(root, bg='#04488E')
+button_frame.pack(pady=10)
+
 start_btn = tk.Button(root, text="Iniciar", command=start_system, bg="green", fg="white", width=15)
-start_btn.pack(pady=10)
+start_btn.pack(side=tk.LEFT, padx=5)
 
 stop_btn = tk.Button(root, text="Encerrar", command=stop_system, bg="red", fg="white", width=15)
-stop_btn.pack(pady=10)
+stop_btn.pack(side=tk.LEFT, padx=5)
 
 #área de regendamento
 label_reschedule = tk.Label(root, text="Reagendar Cliente", font=("Helvetica", 14), bg='#04488E', fg='white')
