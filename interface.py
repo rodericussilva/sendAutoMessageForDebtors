@@ -1,4 +1,5 @@
 import tkinter as tk
+import customtkinter as ctk
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 from datetime import datetime
@@ -118,7 +119,7 @@ logo = ImageTk.PhotoImage(logo_image)
 label_logo = tk.Label(root, image=logo, bg='#04488E')
 label_logo.pack(pady=10)
 
-root.geometry("760x650")
+root.geometry("690x630")
 
 title = tk.Label(root, text="Automação de Cobrança", font=("Helvetica", 16), bg='#04488E', fg='white')
 title.pack(pady=10)
@@ -126,11 +127,12 @@ title.pack(pady=10)
 button_frame = tk.Frame(root, bg='#04488E')
 button_frame.pack(pady=10)
 
-start_btn = tk.Button(root, text="Iniciar", command=start_system, bg="green", fg="white", width=15)
-start_btn.pack(side=tk.LEFT, padx=5)
+# Botões com bordas arredondadas e hover
+start_btn = ctk.CTkButton(button_frame, text="Iniciar", command=start_system, fg_color="green", hover_color="#007f00", corner_radius=15, width=150)
+start_btn.grid(row=0, column=0, padx=5)
 
-stop_btn = tk.Button(root, text="Encerrar", command=stop_system, bg="red", fg="white", width=15)
-stop_btn.pack(side=tk.LEFT, padx=5)
+stop_btn = ctk.CTkButton(button_frame, text="Encerrar", command=stop_system, fg_color="red", hover_color="#bf0000", corner_radius=15, width=150)
+stop_btn.grid(row=0, column=1, padx=5)
 
 #área de regendamento
 label_reschedule = tk.Label(root, text="Reagendar Cliente", font=("Helvetica", 14), bg='#04488E', fg='white')
@@ -154,8 +156,10 @@ label_date.pack(pady=5)
 input_date = tk.Entry(root, width=30)
 input_date.pack()
 
-#botão para reagendar
-btn_reschedule = tk.Button(root, text="Reagendar", command=reschedule_customer, width=15)
+btn_frame = tk.Frame(root, bg='#04488E')
+btn_frame.pack(pady=10)
+
+btn_reschedule = ctk.CTkButton(btn_frame, text="Reagendar", command=reschedule_customer, fg_color="green", hover_color="#007f00", corner_radius=15, width=150)
 btn_reschedule.pack(pady=10)
 
 #cria tabela

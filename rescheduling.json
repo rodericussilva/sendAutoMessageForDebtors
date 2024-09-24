@@ -1,9 +1,3 @@
 {
-    "reagendamentos": [
-        {
-            "name": "Teste < 3 dias",
-            "number": "5585981618657",
-            "new_date_reschedule": "2024-09-21"
-        }
-    ]
+    "reagendamentos": []
 }

@@ -1,0 +1,14 @@
+{
+    "clientes": [
+        {
+            "name": "Usu\u00e1rio Teste",
+            "number": "5585998410112",
+            "last_sent": "2024-09-24"
+        },
+        {
+            "name": "Teste < 3 dias",
+            "number": "5585981618657",
+            "last_sent": "2024-09-24"
+        }
+    ]
+}

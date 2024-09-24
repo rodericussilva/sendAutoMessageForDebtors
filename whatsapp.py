@@ -5,15 +5,15 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, WebDriverException, NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, WebDriverException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
-from rescheduling import check_reschedule
+from rescheduling import check_reschedule, get_last_sent_date, update_last_sent_date
 from notifications import record_success, record_failure
 
 load_dotenv()
@@ -38,7 +38,7 @@ def critical_failure(error_message):
         "Connection refused",
     ]
 
-    for non_critical in non_critical_errors:
+    for non_critical in error_message.lower():
         if non_critical in error_message.lower():
             return False
     return True
@@ -71,14 +71,24 @@ service = Service(ChromeDriverManager().install())
 
 def send_messages(browser, customers):
     """
-    Envia mensagens via WhatsApp para clientes com boletos vencidos.
-    Se houver uma falha, envia uma notificação por email ao funcionário e ao cliente.
+    Envia mensagens para clientes com boletos vencidos.
+    Implementa intervalo de 2 dias entre o envio de mensagens para o mesmo cliente.
     """
     try:
         browser.get('https://web.whatsapp.com/')
     except (NoSuchWindowException, WebDriverException) as e:
         print(f"Erro ao abrir o WhatsApp Web: {e}")
         return
+    
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            WebDriverWait(browser, 50).until(EC.presence_of_element_located((By.ID, "side")))
+            break
+        except Exception as e:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(10)
 
     for customer in customers:
         id = customer['id']
@@ -86,6 +96,12 @@ def send_messages(browser, customers):
         number = customer['number']
         days_late = customer['days_late']
         email = customer.get('email')
+
+        # Verifica a data do último envio
+        last_sent_date = get_last_sent_date(name=name, number=number)
+        if last_sent_date and (datetime.now().date() - last_sent_date.date()).days < 2:
+            print(f'Mensagem para {name} não será enviada. Intervalo de 2 dias ainda não atingido.')
+            continue
 
         if days_late >= 3:
             if check_reschedule(name=name, number=number):
@@ -117,6 +133,7 @@ def send_messages(browser, customers):
                     raise Exception("Número não é WhatsApp")
 
                 record_success(id, name, number)
+                update_last_sent_date(name=name, number=number)  # Atualiza a data do último envio
 
             except Exception as e:
                 error_message = str(e)
