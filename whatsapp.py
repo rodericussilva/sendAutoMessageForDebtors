@@ -11,9 +11,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime
 import time
-from rescheduling import check_reschedule, get_last_sent_date, update_last_sent_date
+from rescheduling import check_reschedule  # Função que bloqueia o envio se o cliente estiver reagendado
 from notifications import record_success, record_failure
 
 load_dotenv()
@@ -38,7 +38,7 @@ def critical_failure(error_message):
         "Connection refused",
     ]
 
-    for non_critical in error_message.lower():
+    for non_critical in non_critical_errors:
         if non_critical in error_message.lower():
             return False
     return True
@@ -71,24 +71,14 @@ service = Service(ChromeDriverManager().install())
 
 def send_messages(browser, customers):
     """
-    Envia mensagens para clientes com boletos vencidos.
-    Implementa intervalo de 2 dias entre o envio de mensagens para o mesmo cliente.
+    Envia mensagens via WhatsApp para clientes com boletos vencidos.
+    Se houver uma falha, envia uma notificação por email ao funcionário e ao cliente.
     """
     try:
         browser.get('https://web.whatsapp.com/')
     except (NoSuchWindowException, WebDriverException) as e:
         print(f"Erro ao abrir o WhatsApp Web: {e}")
         return
-    
-    max_retries = 5
-    for attempt in range(max_retries):
-        try:
-            WebDriverWait(browser, 50).until(EC.presence_of_element_located((By.ID, "side")))
-            break
-        except Exception as e:
-            if attempt == max_retries - 1:
-                raise
-            time.sleep(10)
 
     for customer in customers:
         id = customer['id']
@@ -97,17 +87,13 @@ def send_messages(browser, customers):
         days_late = customer['days_late']
         email = customer.get('email')
 
-        # Verifica a data do último envio
-        last_sent_date = get_last_sent_date(name=name, number=number)
-        if last_sent_date and (datetime.now().date() - last_sent_date.date()).days < 2:
-            print(f'Mensagem para {name} não será enviada. Intervalo de 2 dias ainda não atingido.')
+        # Verifica se o cliente está reagendado (NÃO enviar se a data reagendada ainda não passou)
+        if check_reschedule(name=name, number=number):
+            print(f'Cliente {name} reagendado, ignorando até nova data.')
             continue
 
+        # Lógica de envio de mensagens para clientes com 3 dias ou mais de atraso
         if days_late >= 3:
-            if check_reschedule(name=name, number=number):
-                print(f'Cliente {name} reagendado, ignorando até nova data.')
-                continue
-
             message = f'Olá {name}, \nO seu pagamento está em atraso há {days_late} dias. Por favor, regularize sua situação respondendo a esta mensagem. \nAtenciosamente, \nFinanceiro TS Distribuidora.'
             quote = urllib.parse.quote_plus(message)
             url = f'https://web.whatsapp.com/send?phone={number}&text={quote}'
@@ -132,8 +118,8 @@ def send_messages(browser, customers):
                 if not send_button:
                     raise Exception("Número não é WhatsApp")
 
+                # Se a mensagem foi enviada com sucesso
                 record_success(id, name, number)
-                update_last_sent_date(name=name, number=number)  # Atualiza a data do último envio
 
             except Exception as e:
                 error_message = str(e)
@@ -157,7 +143,7 @@ def send_messages(browser, customers):
                     Atenciosamente, 
 
                     Financeiro TS Distribuidora.
-                        """
+                    """
                         send_email(client_email_subject, client_email_body, email)
                     else:
                         print(f"Email do cliente {name} está vazio, não será enviado.")
