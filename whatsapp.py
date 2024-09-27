@@ -88,7 +88,7 @@ def send_messages(browser, customers):
         days_late = customer['days_late']
         email = customer.get('email')
 
-        # Verifica se o cliente está reagendado (NÃO enviar se a data reagendada ainda não passou)
+        # Verifica se o cliente está reagendado
         if check_reschedule(name=name, number=number):
             print(f'Cliente {name} reagendado, ignorando até nova data.')
             continue
@@ -99,8 +99,7 @@ def send_messages(browser, customers):
             remove_reschedule_if_expired(name_customer=name, number_customer=number)
             continue
 
-        # Lógica de envio de mensagens para clientes com 3 dias ou mais de atraso
-        if days_late >= 3:
+        if days_late >= 6:
             message = f"""Prezado(a) {name}, bom dia.
 
 Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
@@ -110,7 +109,8 @@ Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais brev
 Atenciosamente, 
 
 Financeiro TS Distribuidora.
-**Caso já tenha realizado o pagamento, solicitamos que aguarde até 2 dias úteis para que o sistema confirme a transação e atualize o seu cadastro.
+
+***Caso já tenha realizado o pagamento, peidmos que ignore essa mensagem, pois o siatema leva até 2 dias úteis para confirmar a transação e atualizar o seu cadastro.
                     """
             quote = urllib.parse.quote_plus(message)
             url = f'https://web.whatsapp.com/send?phone={number}&text={quote}'
@@ -135,7 +135,6 @@ Financeiro TS Distribuidora.
                 if not send_button:
                     raise Exception("Número não é WhatsApp")
 
-                # Se a mensagem foi enviada com sucesso
                 record_success(id, name, number)
 
             except Exception as e:
@@ -144,12 +143,12 @@ Financeiro TS Distribuidora.
                 record_failure(id, name, number, str(e))
 
                 if critical_failure(error_message):
-                    email_subject = f"Notificação: WhatsApp não enviado - Falha ({name})"
+                    email_subject = f"Notificação: WhatsApp não enviado - Falha para {name}"
                     email_body = f"O número {number} do cliente {name} apresentou um erro. Verifique se o número está correto, caso contrário, por favor entre em contato com o cliente e atualize o número no cadastro."
                     send_email(email_subject, email_body, FINANCIAL_EMAIL)
 
                     if email:
-                        client_email_subject = "Notificação de atraso de pagamento"
+                        client_email_subject = "Notificação de atraso de pagamento - TS Distribuidora"
                         client_email_body = f"""Prezado(a) {name}, bom dia.
 
 Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
@@ -159,7 +158,8 @@ Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais brev
 Atenciosamente, 
 
 Financeiro TS Distribuidora.
-**Caso já tenha realizado o pagamento, solicitamos que aguarde até 2 dias úteis para que o sistema confirme a transação e atualize o seu cadastro.
+
+***Caso já tenha realizado o pagamento, peidmos que ignore essa mensagem, pois o siatema leva até 2 dias úteis para confirmar a transação e atualizar o seu cadastro.
                     """
                         send_email(client_email_subject, client_email_body, email)
                     else:
