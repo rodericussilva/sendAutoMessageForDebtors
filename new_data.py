@@ -17,26 +17,33 @@ def search_debtors():
     """
     conn = connect_db()
     cursor = conn.cursor()
+    # Atualizando a consulta para incluir a condição de datas
     query = """
         SELECT RAZAO_SOCIAL, FONE1, EMAIL, STATUS, DAT_VENCIMENTO
-        FROM vw_ctrec_clientes
-        WHERE STATUS = 'A'  -- A para aberto, equivalente a vencido
+        FROM vw_clientes
+        WHERE STATUS = 'A'  -- A para aberto
+        AND DAT_VENCIMENTO < ?  -- Apenas boletos vencidos
     """
-    cursor.execute(query)
+    today = datetime.today()
+    cursor.execute(query, today)
     results = cursor.fetchall()
     conn.close()
 
     # Convertendo os resultados para uma lista de dicionários
-    today = datetime.today()
     customers = [
         {
             'name': row.RAZAO_SOCIAL,
             'number': row.FONE1,
             'email': row.EMAIL,
-            'days_late': (row.DAT_VENCIMENTO - today).days if row.DAT_VENCIMENTO else None  # Cálculo dos dias de atraso
+            'due_date': row.DAT_VENCIMENTO,  # Adicionando a data de vencimento
+            'days_late': (today - row.DAT_VENCIMENTO).days  # Cálculo dos dias de atraso
         }
         for row in results
     ]
+    
+    # Filtrando apenas os clientes que estão atrasados há mais de 6 dias
+    customers = [customer for customer in customers if customer['days_late'] > 6]
+
     return customers
 
 def check_payment_status(name_customer=None, number_customer=None):

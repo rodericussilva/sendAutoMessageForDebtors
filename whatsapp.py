@@ -13,8 +13,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
 from datetime import datetime
 import time
-from rescheduling import check_reschedule  # Função que bloqueia o envio se o cliente estiver reagendado
+from rescheduling import check_reschedule, remove_reschedule_if_expired
 from notifications import record_success, record_failure
+from database import check_payment_status
 
 load_dotenv()
 
@@ -92,9 +93,25 @@ def send_messages(browser, customers):
             print(f'Cliente {name} reagendado, ignorando até nova data.')
             continue
 
+        # Verifica se o cliente pagou o boleto
+        if check_payment_status(name_customer=name, number_customer=number):
+            print(f"Cliente {name} pagou o boleto. Removendo do JSON.")
+            remove_reschedule_if_expired(name_customer=name, number_customer=number)
+            continue
+
         # Lógica de envio de mensagens para clientes com 3 dias ou mais de atraso
         if days_late >= 3:
-            message = f'Olá {name}, \nO seu pagamento está em atraso há {days_late} dias. Por favor, regularize sua situação respondendo a esta mensagem. \nAtenciosamente, \nFinanceiro TS Distribuidora.'
+            message = f"""Prezado(a) {name}, bom dia.
+
+Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
+
+Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais breve possível.
+
+Atenciosamente, 
+
+Financeiro TS Distribuidora.
+**Caso já tenha realizado o pagamento, solicitamos que aguarde até 2 dias úteis para que o sistema confirme a transação e atualize o seu cadastro.
+                    """
             quote = urllib.parse.quote_plus(message)
             url = f'https://web.whatsapp.com/send?phone={number}&text={quote}'
 
@@ -133,16 +150,16 @@ def send_messages(browser, customers):
 
                     if email:
                         client_email_subject = "Notificação de atraso de pagamento"
-                        client_email_body = f"""
-                    Olá {name},
+                        client_email_body = f"""Prezado(a) {name}, bom dia.
 
-                    Verificamos que o seu pagamento está em atraso há {days_late} dias.
+Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
 
-                    Por favor, regularize a sua situação. Caso tenha dúvidas, entre em contato conosco.
+Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais breve possível.
 
-                    Atenciosamente, 
+Atenciosamente, 
 
-                    Financeiro TS Distribuidora.
+Financeiro TS Distribuidora.
+**Caso já tenha realizado o pagamento, solicitamos que aguarde até 2 dias úteis para que o sistema confirme a transação e atualize o seu cadastro.
                     """
                         send_email(client_email_subject, client_email_body, email)
                     else:
