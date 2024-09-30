@@ -1,21 +1,26 @@
-from new_data import search_debtors
+# from database import search_debtors
 
-def test_database_connection():
-    try:
-        clientes = search_debtors()
-        total_clientes = len(clientes)  # Contando o total de clientes retornados
-        if total_clientes > 0:
-            print("Conexão com o banco de dados e extração de dados bem-sucedida!")
-            for cliente in clientes:
-                # Adicionando a data de vencimento ao print
-                print(f"Cliente: {cliente['name']}, Telefone: {cliente['number']}, "
-                      f"Dias de Atraso: {cliente['days_late']}, Data de Vencimento: {cliente['due_date']}")
-            # Exibindo o total de clientes
-            print(f"\nTotal de clientes inadimplentes: {total_clientes}")
-        else:
-            print("Nenhum cliente inadimplente encontrado.")
-    except Exception as e:
-        print(f"Erro ao conectar ao banco de dados: {e}")
+# def test_database_connection():
+#     try:
+#         clientes = search_debtors()
+#         total_clientes = len(clientes)
+        
+#         if total_clientes > 0:
+#             print("Conexão com o banco de dados e extração de dados bem-sucedida!")
+#             count_valid_clients = 0
+            
+#             for cliente in clientes:
+#                 # Não é mais necessário verificar o intervalo de 'days_late' 
+#                 # pois a consulta SQL já retorna os clientes entre 3 e 60 dias.
+#                 print(f"Cliente: {cliente['name']}, Telefone: {cliente['number']}, "
+#                       f"Dias de Atraso: {cliente['days_late']}, Data de Vencimento: {cliente['due_date']}")
+#                 count_valid_clients += 1
 
-if __name__ == "__main__":
-    test_database_connection()
+#             print(f"\nTotal de clientes com débitos entre 3 e 60 dias de atraso: {count_valid_clients}")
+#         else:
+#             print("Nenhum cliente inadimplente encontrado.")
+#     except Exception as e:
+#         print(f"Erro ao conectar ao banco de dados: {e}")
+
+# if __name__ == "__main__":
+#     test_database_connection()

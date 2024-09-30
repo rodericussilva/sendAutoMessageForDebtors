@@ -82,3 +82,6 @@
 2024-09-26 15:03:52.624134 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
 2024-09-26 15:08:04.553089 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
 2024-09-26 15:12:51.726438 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-27 11:17:51.566494 - Mensagem enviada com sucesso para Rodrigo Silva (9816-18657).
+2024-09-27 11:18:15.574167 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
+2024-09-27 11:18:37.636592 - Mensagem enviada com sucesso para Teste < 3 dias (9816 18657).

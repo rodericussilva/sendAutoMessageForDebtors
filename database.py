@@ -1,73 +1,74 @@
 import pyodbc
+from datetime import datetime
 
 def connect_db():
     conn = pyodbc.connect(
-        r'DRIVER={SQL Server};'
-        r'SERVER=DESKTOP-CMKE125;'
-        r'DATABASE=CobrancaDB;'
-        r'Trusted_Connection=yes;'
+        'DRIVER={SQL Server};'
+        'SERVER=BDINFARMA-2019;'
+        'DATABASE=DMD;'
+        'UID=SA;'
+        'PWD=AGzzcso1$'
     )
     return conn
 
 def search_debtors():
     """
-    Busca os clientes inadimplentes no banco de dados com boletos pendentes ou vencidos.
+    Busca os clientes inadimplentes no novo banco de dados com boletos pendentes ou vencidos.
     """
     conn = connect_db()
     cursor = conn.cursor()
     query = """
-        SELECT c.id, c.nome, c.telefone, b.dias_atrasados, c.email
-        FROM clientes c
-        JOIN boletos b ON c.id = b.id_cliente
-        WHERE b.status = 'vencido'
+        SELECT RAZAO_SOCIAL, FONE1, EMAIL, STATUS, DAT_VENCIMENTO
+        FROM vw_client
+        WHERE STATUS = 'A'
+        AND DAT_VENCIMENTO < ?
+        AND DATEDIFF(DAY, DAT_VENCIMENTO, GETDATE()) > 3
+        AND DATEDIFF(DAY, DAT_VENCIMENTO, GETDATE()) <= 60;
     """
-    cursor.execute(query)
+    today = datetime.today()
+    cursor.execute(query, today)
     results = cursor.fetchall()
     conn.close()
 
     # Convertendo os resultados para uma lista de dicionários
     customers = [
         {
-            'id': row.id,
-            'name': row.nome,
-            'number': row.telefone,
-            'days_late': row.dias_atrasados,
-            'email': row.email
+            'name': row.RAZAO_SOCIAL,
+            'number': row.FONE1,
+            'email': row.EMAIL,
+            'due_date': row.DAT_VENCIMENTO,
+            'days_late': (today - row.DAT_VENCIMENTO).days  # Cálculo dos dias de atraso
         }
         for row in results
     ]
+
+    # Filtrando apenas os clientes que estão atrasados há mais de 3 dias
+    customers = [customer for customer in customers if customer['days_late'] > 3]
+
     return customers
 
 def check_payment_status(name_customer=None, number_customer=None):
     """
-    Verifica no banco de dados se o boleto do cliente foi pago.
-    :return: True se o boleto foi pago, False caso contrário
+    Verifica no banco de dados se o status do cliente foi quitado.
+    :return: True se o boleto foi pago (status Q), False caso contrário
     """
+    if name_customer is None or number_customer is None:
+        return False  # Retorna False se não houver informações do cliente
+
     conn = connect_db()
     cursor = conn.cursor()
 
+    # Query que verifica diretamente o status do cliente
     query = """
-        SELECT b.status
-        FROM clientes c
-        JOIN boletos b ON c.id = b.id_cliente
-        WHERE b.status = 'pago'
+        SELECT STATUS
+        FROM vw_client
+        WHERE RAZAO_SOCIAL = ? AND FONE1 = ?
     """
     
-    conditions = []
-    if name_customer:
-        conditions.append("c.nome = ?")
-    if number_customer:
-        conditions.append("c.telefone = ?")
-    
-    if conditions:
-        query += " AND (" + " OR ".join(conditions) + ")"
-
-    parameters = [param for param in (name_customer, number_customer) if param]
-    cursor.execute(query, parameters)
-    
+    cursor.execute(query, (name_customer, number_customer))
     result = cursor.fetchone()
     conn.close()
 
-    if result and result[0] == 'pago':
+    if result and result[0] == 'Q':
         return True
     return False

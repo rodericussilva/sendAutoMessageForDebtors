@@ -5,13 +5,21 @@ RESCHEDULING_FILE = 'rescheduling.json'
 
 def load_rescheduling():
     """
-    Carrega os reagendamentos existentes de um arquivo JSON.
+    Carrega os reagendamentos existentes de um arquivo JSON. 
+    Se o arquivo estiver vazio ou corrompido, retorna uma lista vazia.
     """
     try:
         with open(RESCHEDULING_FILE, 'r') as file:
-            data = json.load(file)
+            content = file.read().strip()  # Remove espaços em branco e novas linhas
+            if not content:  # Se o arquivo estiver vazio
+                return []
+            data = json.loads(content)
             return data.get('reagendamentos', []) if isinstance(data, dict) else []
     except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        # Se houver erro na leitura do JSON, retornar uma lista vazia
+        print(f"Erro ao carregar {RESCHEDULING_FILE}: Arquivo corrompido ou inválido.")
         return []
 
 def save_rescheduling(rescheduling):
