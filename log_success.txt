@@ -85,3 +85,8 @@
 2024-09-27 11:17:51.566494 - Mensagem enviada com sucesso para Rodrigo Silva (9816-18657).
 2024-09-27 11:18:15.574167 - Mensagem enviada com sucesso para Usuário Teste (5585998410112).
 2024-09-27 11:18:37.636592 - Mensagem enviada com sucesso para Teste < 3 dias (9816 18657).
+2024-10-01 11:10:24.964031 - Mensagem enviada com sucesso para ARAGAO PRODUTOS FARMACEUTICOS LTDA (32763939).
+2024-10-01 11:10:47.830271 - Mensagem enviada com sucesso para ARAGAO PRODUTOS FARMACEUTICOS LTDA (32763939).
+2024-10-01 11:11:16.328457 - Mensagem enviada com sucesso para ARAGAO PRODUTOS FARMACEUTICOS LTDA (32763939).
+2024-10-01 11:11:38.654975 - Mensagem enviada com sucesso para ARAGAO PRODUTOS FARMACEUTICOS LTDA (32763939).
+2024-10-01 11:14:54.227621 - Mensagem enviada com sucesso para EVELINE BRAGA CRUZ ME (989259306).

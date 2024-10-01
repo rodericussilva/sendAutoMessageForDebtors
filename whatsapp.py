@@ -1,20 +1,24 @@
 import os
+from dotenv import load_dotenv
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, WebDriverException, TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchWindowException, WebDriverException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
-from rescheduling import check_reschedule, remove_reschedule_if_expired
+from rescheduling import check_reschedule
 from notifications import record_success, record_failure
+from rescheduling import check_reschedule, remove_reschedule_if_expired
 from database import check_payment_status
+
+load_dotenv()
 
 SMTP_SERVER = os.getenv('SMTP_SERVER')
 SMTP_PORT = os.getenv('SMTP_PORT')
@@ -60,15 +64,24 @@ service = Service(ChromeDriverManager().install())
 
 def send_messages(browser, customers):
     """
-    Envia mensagens via WhatsApp para clientes com boletos vencidos.
-    Mensagens são enviadas para clientes com mais de 3 dias e menos de 60 dias de atraso.
+    Envia mensagens para clientes com boletos vencidos.
+    Implementa intervalo de 2 dias entre o envio de mensagens para o mesmo cliente.
     """
     try:
         browser.get('https://web.whatsapp.com/')
-        time.sleep(10)
     except (NoSuchWindowException, WebDriverException) as e:
         print(f"Erro ao abrir o WhatsApp Web: {e}")
         return
+    
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            WebDriverWait(browser, 50).until(EC.presence_of_element_located((By.ID, "side")))
+            break
+        except Exception as e:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(10)
 
     for customer in customers:
         name = customer['name']
@@ -104,17 +117,22 @@ Financeiro TS Distribuidora.
             print(f'Enviando mensagem para {name} ({number})')
             browser.get(url)
 
-            try:
-                send_button = WebDriverWait(browser, 30).until(
-                    EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]'))
-                )
-                browser.execute_script("arguments[0].scrollIntoView();", send_button)
-                send_button.click()
-                time.sleep(10)
-            except TimeoutException:
-                print(f"Tempo excedido para encontrar o botão de envio para {name}. Tentando o próximo cliente.")
-                continue
-            
+            send_button = None
+            for attempt in range(3):
+                try:
+                    send_button = WebDriverWait(browser, 40).until(
+                            EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]'))
+                        )
+                    browser.execute_script("arguments[0].scrollIntoView();", send_button)
+                    send_button.click()
+                    time.sleep(10)
+                    break 
+                except StaleElementReferenceException:
+                    print(f"O botão de envio expirou para {name}. Tentando novamente (tentativa {attempt + 1}/3)")
+
+            if not send_button:
+                raise Exception("Número não é WhatsApp")
+
             record_success(name, number)
 
         except Exception as e:
@@ -123,12 +141,13 @@ Financeiro TS Distribuidora.
             record_failure(name, number, str(e))
 
             if critical_failure(error_message):
-                email_subject = f"Notificação: WhatsApp não enviado - Falha para {name}"
+                email_subject = f"Notificação: WhatsApp não enviado - Falha ({name})"
+                email_body = f"Notificação: WhatsApp não enviado - Falha para {name}"
                 email_body = f"O número {number} do cliente {name} apresentou um erro. Verifique se o número está correto, ou atualize-o."
                 send_email(email_subject, email_body, FINANCIAL_EMAIL)
 
                 if email:
-                    client_email_subject = "Notificação de atraso de pagamento - TS Distribuidora"
+                    client_email_subject = "Notificação de atraso de pagamento"
                     client_email_body = f"""Prezado(a) {name}, bom dia.
 
 Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.

@@ -1,12 +1,12 @@
 from datetime import datetime
 
-def record_success(id, name, number):
+def record_success(name, number):
 
     with open('log_success.txt', 'a') as file:
         file.write(f"{datetime.now()} - Mensagem enviada com sucesso para {name} ({number}).\n")
     #print(f"Mensagem enviada com sucesso para {name} ({number}).")
 
-def record_failure(id, name, number, error):
+def record_failure(name, number, error):
     # :param erro: Descrição do erro ocorrido
 
     with open('log_failure.txt', 'a') as file:

@@ -40,7 +40,6 @@ def check_reschedule(name=None, number=None):
         if (name and reagendamento.get('name') == name) or (number and reagendamento.get('number') == number):
             new_date = datetime.strptime(reagendamento['new_date_reschedule'], '%Y-%m-%d').date()
             if new_date > datetime.now().date():
-                # Se a data reagendada ainda não passou, retornar True para impedir o envio
                 return True
     return False
 
@@ -54,7 +53,6 @@ def remove_reschedule_if_expired(name_customer=None, number_customer=None):
     for reschedule in rescheduling:
         new_date = datetime.strptime(reschedule['new_date_reschedule'], '%Y-%m-%d').date()
 
-        # Verifica se o reagendamento expirou ou se corresponde ao cliente específico
         if new_date >= datetime.now().date() or \
            (reschedule['name'] == name_customer or reschedule['number'] == number_customer):
             rescheduling_updated.append(reschedule)
