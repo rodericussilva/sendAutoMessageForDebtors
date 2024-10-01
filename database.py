@@ -1,13 +1,17 @@
 import pyodbc
+import os
+from dotenv import load_dotenv
 from datetime import datetime
+
+load_dotenv()
 
 def connect_db():
     conn = pyodbc.connect(
         'DRIVER={SQL Server};'
-        'SERVER=BDINFARMA-2019;'
-        'DATABASE=DMD;'
-        'UID=SA;'
-        'PWD=AGzzcso1$'
+        f'SERVER={os.getenv("DB_SERVER")};'
+        f'DATABASE={os.getenv("DB_DATABASE")};'
+        f'UID={os.getenv("DB_UID")};'
+        f'PWD={os.getenv("DB_PWD")}'
     )
     return conn
 
@@ -30,19 +34,17 @@ def search_debtors():
     results = cursor.fetchall()
     conn.close()
 
-    # Convertendo os resultados para uma lista de dicionários
     customers = [
         {
             'name': row.RAZAO_SOCIAL,
             'number': row.FONE1,
             'email': row.EMAIL,
             'due_date': row.DAT_VENCIMENTO,
-            'days_late': (today - row.DAT_VENCIMENTO).days  # Cálculo dos dias de atraso
+            'days_late': (today - row.DAT_VENCIMENTO).days 
         }
         for row in results
     ]
 
-    # Filtrando apenas os clientes que estão atrasados há mais de 3 dias
     customers = [customer for customer in customers if customer['days_late'] > 3]
 
     return customers
@@ -53,12 +55,11 @@ def check_payment_status(name_customer=None, number_customer=None):
     :return: True se o boleto foi pago (status Q), False caso contrário
     """
     if name_customer is None or number_customer is None:
-        return False  # Retorna False se não houver informações do cliente
+        return False
 
     conn = connect_db()
     cursor = conn.cursor()
 
-    # Query que verifica diretamente o status do cliente
     query = """
         SELECT STATUS
         FROM vw_client

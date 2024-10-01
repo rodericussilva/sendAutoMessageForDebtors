@@ -16,7 +16,6 @@ from rescheduling import check_reschedule, remove_reschedule_if_expired
 from notifications import record_success, record_failure
 from database import check_payment_status
 
-# Configuração do envio de email
 SMTP_SERVER = os.getenv('SMTP_SERVER')
 SMTP_PORT = os.getenv('SMTP_PORT')
 EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
@@ -77,18 +76,15 @@ def send_messages(browser, customers):
         days_late = customer['days_late']
         email = customer.get('email')
 
-        # Verifica se o cliente está reagendado
         if check_reschedule(name=name, number=number):
             print(f'Cliente {name} reagendado, ignorando até nova data.')
             continue
 
-        # Verifica se o cliente pagou o boleto
         if check_payment_status(name_customer=name, number_customer=number):
             print(f"Cliente {name} pagou o boleto. Removendo da lista ou ignorando.")
             remove_reschedule_if_expired(name_customer=name, number_customer=number)
             continue
 
-        # Preparando a mensagem
         message = f"""Prezado(a) {name}, bom dia.
 
 Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
@@ -108,7 +104,6 @@ Financeiro TS Distribuidora.
             print(f'Enviando mensagem para {name} ({number})')
             browser.get(url)
 
-            # Reduz o tempo de espera para melhorar a performance
             try:
                 send_button = WebDriverWait(browser, 30).until(
                     EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]'))
@@ -118,7 +113,7 @@ Financeiro TS Distribuidora.
                 time.sleep(10)
             except TimeoutException:
                 print(f"Tempo excedido para encontrar o botão de envio para {name}. Tentando o próximo cliente.")
-                continue  # Passa para o próximo cliente sem quebrar o loop
+                continue
             
             record_success(name, number)
 
@@ -127,7 +122,6 @@ Financeiro TS Distribuidora.
             print(f"Erro ao enviar mensagem para {name} ({number}): {str(e)}")
             record_failure(name, number, str(e))
 
-            # Envia email em caso de falha crítica
             if critical_failure(error_message):
                 email_subject = f"Notificação: WhatsApp não enviado - Falha para {name}"
                 email_body = f"O número {number} do cliente {name} apresentou um erro. Verifique se o número está correto, ou atualize-o."
