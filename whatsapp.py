@@ -86,7 +86,8 @@ def send_messages(browser, customers):
     for customer in customers:
         name = customer['name']
         number = customer['number']
-        days_late = customer['days_late']
+        boletos = customer['boletos']
+        total_days_late = customer['total_days_late']
         email = customer.get('email')
 
         if check_reschedule(name=name, number=number):
@@ -100,11 +101,11 @@ def send_messages(browser, customers):
 
         message = f"""Prezado(a) {name}, bom dia.
 
-Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
+Estamos entrando em contato para informar que há {boletos} boletos em aberto conosco, totalizando {total_days_late} dias de atraso.
 
 Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais breve possível.
 
-Atenciosamente, 
+Atenciosamente,
 
 Financeiro TS Distribuidora.
 
@@ -150,16 +151,16 @@ Financeiro TS Distribuidora.
                     client_email_subject = "Notificação de atraso de pagamento"
                     client_email_body = f"""Prezado(a) {name}, bom dia.
 
-Estamos entrando em contato para informar que há um valor em aberto conosco há {days_late} dias.
+Estamos entrando em contato para informar que há {boletos} boletos em aberto conosco, totalizando {total_days_late} dias de atraso.
 
 Gostaríamos de solicitar a gentileza de regularizar esta pendência o mais breve possível.
 
-Atenciosamente, 
+Atenciosamente,
 
 Financeiro TS Distribuidora.
 
 ***Caso já tenha realizado o pagamento, pedimos que ignore essa mensagem, pois o sistema leva até 2 dias úteis para confirmar a transação e atualizar o seu cadastro.
-                    """
+                """
                     send_email(client_email_subject, client_email_body, email)
                 else:
                     print(f"Email do cliente {name} está vazio, não será enviado.")

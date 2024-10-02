@@ -17,7 +17,7 @@ def connect_db():
 
 def search_debtors():
     """
-    Busca os clientes inadimplentes no novo banco de dados com boletos pendentes ou vencidos.
+    Busca os clientes inadimplentes e agrupa por nome/número, consolidando os boletos em aberto.
     """
     conn = connect_db()
     cursor = conn.cursor()
@@ -27,25 +27,44 @@ def search_debtors():
         WHERE STATUS = 'A'
         AND DAT_VENCIMENTO < ?
         AND DATEDIFF(DAY, DAT_VENCIMENTO, GETDATE()) > 3
-        AND DATEDIFF(DAY, DAT_VENCIMENTO, GETDATE()) <= 60;
+        AND DATEDIFF(DAY, DAT_VENCIMENTO, GETDATE()) <= 20;
     """
     today = datetime.today()
     cursor.execute(query, today)
     results = cursor.fetchall()
     conn.close()
 
+    # Dicionário para agrupar boletos por cliente
+    customers_dict = {}
+
+    for row in results:
+        name = row.RAZAO_SOCIAL
+        number = row.FONE1
+        days_late = (today - row.DAT_VENCIMENTO).days
+        email = row.EMAIL
+
+        if (name, number) not in customers_dict:
+            customers_dict[(name, number)] = {
+                'name': name,
+                'number': number,
+                'email': email,
+                'boletos': 0,
+                'total_days_late': 0,
+            }
+
+        customers_dict[(name, number)]['boletos'] += 1
+        customers_dict[(name, number)]['total_days_late'] += days_late
+
     customers = [
         {
-            'name': row.RAZAO_SOCIAL,
-            'number': row.FONE1,
-            'email': row.EMAIL,
-            'due_date': row.DAT_VENCIMENTO,
-            'days_late': (today - row.DAT_VENCIMENTO).days 
+            'name': customer['name'],
+            'number': customer['number'],
+            'email': customer['email'],
+            'boletos': customer['boletos'],
+            'total_days_late': customer['total_days_late'],
         }
-        for row in results
+        for customer in customers_dict.values()
     ]
-
-    customers = [customer for customer in customers if customer['days_late'] > 3]
 
     return customers
 
