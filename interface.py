@@ -119,7 +119,7 @@ logo = ImageTk.PhotoImage(logo_image)
 label_logo = tk.Label(root, image=logo, bg='#04488E')
 label_logo.pack(pady=10)
 
-root.geometry("690x630")
+root.geometry("690x650")
 
 title = tk.Label(root, text="Automação de Cobrança", font=("Helvetica", 16), bg='#04488E', fg='white')
 title.pack(pady=10)
@@ -127,7 +127,6 @@ title.pack(pady=10)
 button_frame = tk.Frame(root, bg='#04488E')
 button_frame.pack(pady=10)
 
-# Botões de iniciar e encerrar com bordas arredondadas e hover
 start_btn = ctk.CTkButton(button_frame, text="Iniciar", command=start_system, fg_color="green", hover_color="#007f00", corner_radius=15, width=150)
 start_btn.grid(row=0, column=0, padx=5)
 
@@ -167,8 +166,8 @@ table.heading("Nome", text="Nome")
 table.heading("Telefone", text="Telefone")
 table.heading("Data de Reagendamento", text="Data de Reagendamento")
 
-table.column("Nome", width=150, anchor="center")
-table.column("Telefone", width=150, anchor="center")
+table.column("Nome", width=320, anchor="center")
+table.column("Telefone", width=110, anchor="center")
 table.column("Data de Reagendamento", width=150, anchor="center")
 
 # Exibe a tabela

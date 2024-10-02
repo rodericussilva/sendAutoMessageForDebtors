@@ -11,10 +11,10 @@ def test_database_connection():
             
             for cliente in clientes:
                 print(f"Cliente: {cliente['name']}, Telefone: {cliente['number']}, "
-                      f"Dias de Atraso: {cliente['days_late']}, Data de Vencimento: {cliente['due_date']}, email: {cliente['email']}")
+                      f"Dias de Atraso: {cliente['total_days_late']}, Boletos: {cliente['boletos']}, email: {cliente['email']}")
                 count_valid_clients += 1
 
-            print(f"\nTotal de clientes com débitos entre 3 e 60 dias de atraso: {count_valid_clients}")
+            print(f"\nTotal de clientes com débitos entre 3 e 20 dias de atraso: {count_valid_clients}")
         else:
             print("Nenhum cliente inadimplente encontrado.")
     except Exception as e:
