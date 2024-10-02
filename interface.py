@@ -139,17 +139,17 @@ label_reschedule.pack(pady=10)
 
 label_name = tk.Label(root, text="Nome do cliente", bg='#04488E', fg='white')
 label_name.pack(pady=5)
-input_name = tk.Entry(root, width=30)
+input_name = tk.Entry(root, width=50)
 input_name.pack()
 
 label_number = tk.Label(root, text="Número de telefone do cliente", bg='#04488E', fg='white')
 label_number.pack(pady=5)
-input_number = tk.Entry(root, width=30)
+input_number = tk.Entry(root, width=50)
 input_number.pack()
 
 label_date = tk.Label(root, text="Nova data (DD/MM/AAAA)", bg='#04488E', fg='white')
 label_date.pack(pady=5)
-input_date = tk.Entry(root, width=30)
+input_date = tk.Entry(root, width=50)
 input_date.pack()
 
 btn_frame = tk.Frame(root, bg='#04488E')
