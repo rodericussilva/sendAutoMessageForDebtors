@@ -143,7 +143,7 @@ label_name.pack(pady=5)
 input_name = tk.Entry(root, width=30)
 input_name.pack()
 
-label_number = tk.Label(root, text="Número do cliente", bg='#04488E', fg='white')
+label_number = tk.Label(root, text="Número de telefone do cliente", bg='#04488E', fg='white')
 label_number.pack(pady=5)
 input_number = tk.Entry(root, width=30)
 input_number.pack()
