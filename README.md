@@ -8,7 +8,7 @@ Automatizar o processo de cobrança de clientes inadimplentes, garantindo efici�
 - Extração de dados dos clientes inadimplentes diretamente do banco de dados.
 - Envio de mensagens automáticas via WhatsApp Web.
 - Notificação por e-mail em casos de número whatsapp inválido.
-- Reagendamento de cobranças sem necessidade de criar novas tabelas no banco de dados.
+- Reagendamento de cobranças sem necessidade de alterar ou criar novas tabelas no banco de dados.
 
 ## Componentes e Funcionalidades Implementadas
 
