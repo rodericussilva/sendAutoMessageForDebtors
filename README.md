@@ -2,6 +2,7 @@
 
 **Projeto completo na branch oficial
 **Esta branch (main) ainda está em desenvolvimento
+
 Este projeto tem como objetivo automatizar o processo de cobrança de clientes inadimplentes utilizando Python, Selenium, integração com o banco de dados MySQL, e uma interface gráfica para controle de operações e reagendamentos. A solução busca consolidar os boletos em aberto, enviar notificações personalizadas via WhatsApp, e facilitar a gestão de clientes através de uma interface amigável.
 
 ## Objetivo Geral
