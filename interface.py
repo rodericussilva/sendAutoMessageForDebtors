@@ -127,30 +127,25 @@ title.pack(pady=10)
 button_frame = tk.Frame(root, bg='#04488E')
 button_frame.pack(pady=10)
 
-# Botões com bordas arredondadas e hover
 start_btn = ctk.CTkButton(button_frame, text="Iniciar", command=start_system, fg_color="green", hover_color="#007f00", corner_radius=15, width=150)
 start_btn.grid(row=0, column=0, padx=5)
 
 stop_btn = ctk.CTkButton(button_frame, text="Encerrar", command=stop_system, fg_color="red", hover_color="#bf0000", corner_radius=15, width=150)
 stop_btn.grid(row=0, column=1, padx=5)
 
-#área de regendamento
 label_reschedule = tk.Label(root, text="Reagendar Cliente", font=("Helvetica", 14), bg='#04488E', fg='white')
 label_reschedule.pack(pady=10)
 
-#entrada do nome
 label_name = tk.Label(root, text="Nome do cliente", bg='#04488E', fg='white')
 label_name.pack(pady=5)
 input_name = tk.Entry(root, width=30)
 input_name.pack()
 
-#entrada do número
 label_number = tk.Label(root, text="Número do cliente", bg='#04488E', fg='white')
 label_number.pack(pady=5)
 input_number = tk.Entry(root, width=30)
 input_number.pack()
 
-#entrada da nova data
 label_date = tk.Label(root, text="Nova data (DD/MM/AAAA)", bg='#04488E', fg='white')
 label_date.pack(pady=5)
 input_date = tk.Entry(root, width=30)
@@ -162,21 +157,17 @@ btn_frame.pack(pady=10)
 btn_reschedule = ctk.CTkButton(btn_frame, text="Reagendar", command=reschedule_customer, fg_color="green", hover_color="#007f00", corner_radius=15, width=150)
 btn_reschedule.pack(pady=10)
 
-#cria tabela
 columns = ("Nome", "Telefone", "Data de Reagendamento")
 table = ttk.Treeview(root, columns=columns, show="headings")
 
-#cabeçalho da tabela
 table.heading("Nome", text="Nome")
 table.heading("Telefone", text="Telefone")
 table.heading("Data de Reagendamento", text="Data de Reagendamento")
 
-#tamanho das colunas
 table.column("Nome", width=150, anchor="center")
 table.column("Telefone", width=150, anchor="center")
 table.column("Data de Reagendamento", width=150, anchor="center")
 
-#configura tag para centralizar texto
 table.tag_configure('center', anchor='center')
 
 #aplica a tag as linhas
@@ -184,7 +175,6 @@ def insert_centered_item(*args, **kwargs):
     item = table.insert(*args, **kwargs)
     table.item(item, tags=('center',))
 
-#exibe tabela
 table.pack(pady=10)
 
 update_reschedule_table()
