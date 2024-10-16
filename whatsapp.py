@@ -27,11 +27,19 @@ EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 FINANCIAL_EMAIL = os.getenv('FINANCIAL_EMAIL')
 
 def critical_failure(error_message):
+    #Lista de erros que não se enquadram em um número que não seja whatsapp, isso evita que um email seja disparado em caso
+    #de falhas simples como fechamento inesperado do navegador, elemento não encontrado e etc
     non_critical_errors = [
-        "no such window", "no such element", "element not interactable", 
+        "no such window", 
+        "no such element", 
+        "element not interactable", 
         "timed out after x seconds waiting for element to be clickable", 
-        "web view not found", "stale element reference", "unknown error", 
-        "element click intercepted", "is not clickable", "Connection refused"
+        "web view not found", 
+        "stale element reference", 
+        "unknown error", 
+        "element click intercepted", 
+        "is not clickable", 
+        "Connection refused"
     ]
     
     for non_critical in non_critical_errors:
@@ -63,10 +71,6 @@ def send_email(subject, body, recipient_email):
 service = Service(ChromeDriverManager().install())
 
 def send_messages(browser, customers):
-    """
-    Envia mensagens para clientes com boletos vencidos.
-    Implementa intervalo de 2 dias entre o envio de mensagens para o mesmo cliente.
-    """
     try:
         browser.get('https://web.whatsapp.com/')
     except (NoSuchWindowException, WebDriverException) as e:
