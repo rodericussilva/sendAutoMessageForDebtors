@@ -63,8 +63,8 @@ projeto_cobranca/
 ## Instalação
 1. Clone o repositório:
 ```
-git clone https://github.com/seu-usuario/sistema-automacao-cobranca.git
-cd sistema-automacao-cobranca
+git clone https://github.com/rodericussilva/sendAutoMessageForDebtors.git
+cd sendAutoMessageForDebtors
 ```
 2. Crie um ambiente virtual e instale as dependências:
 ```
