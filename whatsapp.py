@@ -25,7 +25,9 @@ EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 FINANCIAL_EMAIL = os.getenv('FINANCIAL_EMAIL')
 
 def critical_failure(error_message):
-    non_critical_errors = [
+    #Lista de erros que não se enquadram em um número que não seja whatsapp, isso evita que um email seja disparado em caso
+    #de falhas simples como fechamento inesperado do navegador, elemento não encontrado e etc.
+    non_critical_errors = 
         "no such window",
         "no such element",
         "element not interactable",
