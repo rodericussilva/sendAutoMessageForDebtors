@@ -1,3 +1,5 @@
+# Script criado para testar conexão com o banco de dados, o mesmo retorna o total de clientes com débitos no intervalo estabelecido
+# podendo estimar o tempo de envio das mensagens
 from database import search_debtors
 
 def test_database_connection():
