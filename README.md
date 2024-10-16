@@ -13,13 +13,13 @@ Automatizar o processo de cobrança de clientes inadimplentes, garantindo efici�
 ## Componentes e Funcionalidades Implementadas
 
 1. **Extração de Dados**:
-   - Conexão com o banco de dados Infarma usando `pyodbc` para extrair os dados dos clientes inadimplentes.
+   - Conexão com o banco de dados usando `pyodbc` para extrair os dados dos clientes inadimplentes.
 
 2. **Envio de Mensagens Automáticas via WhatsApp**:
    - Uso do **Selenium** para automatizar o envio de mensagens personalizadas para clientes com atrasos.
 
 3. **Notificação em Caso de Número Não Ser WhatsApp**:
-   - Se o número não for WhatsApp, o script envia um alerta por e-mail para o cliente e para que o funcionário entre em contato com o cliente e atualize o cadastro.
+   - Se o número não for WhatsApp, o script envia um alerta de cobrança por e-mail para o cliente e para que o funcionário entre em contato com o cliente e atualize o cadastro.
 
 4. **Reagendamento de Pagamento**:
    - Implementação de reagendamento sem a criação de nova tabela, utilizando um arquivo JSON para armazenar temporariamente os reagendamentos.
