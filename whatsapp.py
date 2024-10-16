@@ -72,10 +72,6 @@ def send_email(subject, body, recipient_email):
 service = Service(ChromeDriverManager().install())
 
 def send_messages(browser, customers):
-    """
-    Envia mensagens para clientes com boletos vencidos.
-    Implementa intervalo de 2 dias entre o envio de mensagens para o mesmo cliente.
-    """
     try:
         browser.get('https://web.whatsapp.com/')
     except (NoSuchWindowException, WebDriverException) as e:
@@ -99,7 +95,6 @@ def send_messages(browser, customers):
         days_late = customer['days_late']
         email = customer.get('email')
 
-        # Verifica a data do último envio
         last_sent_date = get_last_sent_date(name=name, number=number)
         if last_sent_date and (datetime.now().date() - last_sent_date.date()).days < 2:
             print(f'Mensagem para {name} não será enviada. Intervalo de 2 dias ainda não atingido.')
