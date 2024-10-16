@@ -1,18 +1,20 @@
 import pyodbc
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def connect_db():
     conn = pyodbc.connect(
-        r'DRIVER={SQL Server};'
-        r'SERVER=DESKTOP-CMKE125;'
-        r'DATABASE=CobrancaDB;'
-        r'Trusted_Connection=yes;'
+        'DRIVER={SQL Server};'
+        f'SERVER={os.getenv("DB_SERVER")};'
+        f'DATABASE={os.getenv("DB_DATABASE")};'
+        f'UID={os.getenv("DB_UID")};'
+        f'PWD={os.getenv("DB_PWD")}'
     )
     return conn
 
 def search_debtors():
-    """
-    Busca os clientes inadimplentes no banco de dados com boletos pendentes ou vencidos.
-    """
     conn = connect_db()
     cursor = conn.cursor()
     query = """
@@ -25,7 +27,6 @@ def search_debtors():
     results = cursor.fetchall()
     conn.close()
 
-    # Convertendo os resultados para uma lista de dicionários
     customers = [
         {
             'id': row.id,
@@ -39,10 +40,6 @@ def search_debtors():
     return customers
 
 def check_payment_status(name_customer=None, number_customer=None):
-    """
-    Verifica no banco de dados se o boleto do cliente foi pago.
-    :return: True se o boleto foi pago, False caso contrário
-    """
     conn = connect_db()
     cursor = conn.cursor()
 
