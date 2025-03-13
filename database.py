@@ -114,3 +114,65 @@ def check_payment_status(name_customer=None, number_customer=None):
     if result and result[0] == 'Q':
         return True
     return False
+
+def get_due_date_reminders():
+    """
+    Busca os clientes que têm boletos vencendo em cinco dias e conta quantos boletos cada cliente tem em aberto.
+    """
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    query = """
+        SELECT
+            cl.Razao_Social,
+            cl.Fone1,
+            cl.Email,
+            ct.Dat_Vencimento,
+            ct.Vlr_Documento
+        FROM CLIEN AS cl
+        JOIN CTREC AS ct 
+            ON cl.Codigo = ct.Cod_Cliente
+        JOIN ENXES AS en 
+            ON ct.Cod_Cliente = en.Cod_Client and cod_regtri = '23' and cod_agente = '4'
+        WHERE ct.Status = 'A'
+          AND DATEDIFF(DAY, GETDATE(), ct.Dat_Vencimento) = 5;
+    """
+    
+    cursor.execute(query)
+    results = cursor.fetchall()
+    conn.close()
+
+    reminders_dict = {}
+
+    for row in results:
+        name = row.Razao_Social
+        number = row.Fone1
+        email = row.Email
+        due_date = row.Dat_Vencimento
+        document_value = row.Vlr_Documento
+
+        if (name, number) not in reminders_dict:
+            reminders_dict[(name, number)] = {
+                'name': name,
+                'number': number,
+                'email': email,
+                'due_date': due_date,
+                'value': document_value,
+                'boletos': 0,
+            }
+
+        reminders_dict[(name, number)]['boletos'] += 1
+
+    reminders = [
+        {
+            'name': reminder['name'],
+            'number': reminder['number'],
+            'email': reminder['email'],
+            'due_date': reminder['due_date'],
+            'value': reminder['value'],
+            'boletos': reminder['boletos'],
+        }
+        for reminder in reminders_dict.values()
+    ]
+
+    return reminders
