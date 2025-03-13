@@ -91,10 +91,6 @@ def search_debtors():
     return customers
     
 def check_payment_status(name_customer=None, number_customer=None):
-    """
-    Verifica no banco de dados se o status do cliente foi quitado.
-    :return: True se o boleto foi pago (status Q), False caso contrário
-    """
     if name_customer is None or number_customer is None:
         return False
 
@@ -116,9 +112,6 @@ def check_payment_status(name_customer=None, number_customer=None):
     return False
 
 def get_due_date_reminders():
-    """
-    Busca os clientes que têm boletos vencendo em cinco dias e conta quantos boletos cada cliente tem em aberto.
-    """
     conn = connect_db()
     cursor = conn.cursor()
     
