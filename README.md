@@ -1,13 +1,10 @@
 # Sistema de Automação de Cobrança via WhatsApp
 
-**Projeto completo na branch oficial
-**Esta branch (main) ainda está em desenvolvimento
-
-Este projeto tem como objetivo automatizar o processo de cobrança de clientes inadimplentes utilizando Python, Selenium, integração com o banco de dados MySQL, e uma interface gráfica para controle de operações e reagendamentos. A solução busca consolidar os boletos em aberto, enviar notificações personalizadas via WhatsApp, e facilitar a gestão de clientes através de uma interface amigável.
+Este projeto tem como objetivo automatizar o processo de cobrança de clientes inadimplentes utilizando Python, Selenium, integração com o banco de dados SQL Server, e uma interface gráfica para controle de operações e reagendamentos. A solução busca consolidar os boletos em aberto, enviar notificações personalizadas via WhatsApp, e facilitar a gestão de clientes através de uma interface intuitiva.
 
 ## Objetivo Geral
 
-Automatizar o processo de cobrança de clientes inadimplentes, garantindo eficiência e precisão, com foco em:
+Automatizar o processo de cobrança de clientes inadimplentes e alerta de vencimento com 5 dias de antecedência, garantindo eficiência e precisão, com foco em:
 - Extração de dados dos clientes inadimplentes diretamente do banco de dados.
 - Envio de mensagens automáticas via WhatsApp Web.
 - Notificação por e-mail em casos de número whatsapp inválido.
@@ -16,13 +13,13 @@ Automatizar o processo de cobrança de clientes inadimplentes, garantindo efici�
 ## Componentes e Funcionalidades Implementadas
 
 1. **Extração de Dados**:
-   - Conexão com o banco de dados usando `pyodbc` para extrair os dados dos clientes inadimplentes.
+   - Conexão com o banco de dados usando `pyodbc` para extrair os dados dos clientes inadimplentes e boletos com 5 dias antes do vencimento .
 
 2. **Envio de Mensagens Automáticas via WhatsApp**:
-   - Uso do **Selenium** para automatizar o envio de mensagens personalizadas para clientes com atrasos.
+   - Uso do **Selenium** para automatizar o envio de mensagens personalizadas para clientes com atrasos e alerta de vencimento.
 
 3. **Notificação em Caso de Número Não Ser WhatsApp**:
-   - Se o número não for WhatsApp, o script envia um alerta de cobrança por e-mail para o cliente e para que o funcionário entre em contato com o cliente e atualize o cadastro.
+   - Se o número não for WhatsApp, o script envia um alerta de cobrança por e-mail para o cliente e para que o funcionário do financeiro entre em contato com o cliente para atualizar o cadastro.
 
 4. **Reagendamento de Pagamento**:
    - Implementação de reagendamento sem a criação de nova tabela, utilizando um arquivo JSON para armazenar temporariamente os reagendamentos.
@@ -37,6 +34,7 @@ Automatizar o processo de cobrança de clientes inadimplentes, garantindo efici�
 2. **Envio de Mensagens**: Para cada cliente, verifica se há reagendamentos. Se houver, e a nova data não tiver sido alcançada, o cliente é ignorado.
 3. **Controle de Reagendamentos**: A interface gráfica permite ao usuário adicionar ou atualizar reagendamentos sem necessidade de modificar o código.
 4. **Agrupamento de Boletos**: Consolidando boletos de um mesmo cliente, enviando uma única mensagem com a soma de todos os boletos em aberto.
+5. **Alerta de Vencimento**: Consolidando os Boletos de um mesmo cliente, enviando alerta 5 dias antes do vencimento do título.
 
 ## Estrutura do Projeto
 
@@ -50,6 +48,8 @@ projeto_cobranca/
 ├── interface.py             # Interface gráfica para controle do sistema
 ├── log_success.txt          # Log de mensagens enviadas com sucesso
 ├── log_failure.txt          # Log de falhas de envio
+├── log_email_success.txt    # Log de email enviado com sucesso
+├── log_email_failure.txt    # Log de falha no envio de email
 ├── .env                     # Variáveis de ambiente para configurações do sistema
 ├── rescheduling.json        # Arquivo para armazenar os reagendamentos temporários
 ├── requirements.txt         # Lista de dependências do projeto
@@ -83,7 +83,7 @@ DB_DATABASE=sua_base_de_dados
 DB_UID=seu_usuario
 DB_PWD=sua_senha
 SMTP_SERVER=smtp.seuemail.com
-SMTP_PORT=587
+SMTP_PORT=porta_padrão_do_servidor_de_email
 EMAIL_LOGIN=seu_email
 EMAIL_PASSWORD=sua_senha_de_email
 FINANCIAL_EMAIL=email_do_financeiro
