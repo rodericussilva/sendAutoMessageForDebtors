@@ -30,11 +30,15 @@ Automatizar o processo de cobrança de clientes inadimplentes e alerta de vencim
 
 ## Fluxo de Operação
 
-1. **Início**: O sistema verifica se há clientes inadimplentes e se conecta ao banco de dados.
-2. **Envio de Mensagens**: Para cada cliente, verifica se há reagendamentos. Se houver, e a nova data não tiver sido alcançada, o cliente é ignorado.
-3. **Controle de Reagendamentos**: A interface gráfica permite ao usuário adicionar ou atualizar reagendamentos sem necessidade de modificar o código.
-4. **Agrupamento de Boletos**: Consolidando boletos de um mesmo cliente, enviando uma única mensagem com a soma de todos os boletos em aberto.
-5. **Alerta de Vencimento**: Consolidando os Boletos de um mesmo cliente, enviando alerta 5 dias antes do vencimento do título.
+![Fluxo](/images/fluxo_sendAutoMessage.png)
+
+1. **Início**: O processo começa quando a Interface é iniciada.
+2. **Consulta ao Banco de Dadoss**: O sistema acessa o banco de dados para buscar os boletos vencidos ou próximos do vencimento..
+3. **Verificação de Boletos**: O processo verifica se os boletos atendem ao critério.
+4. **Cliente Reagendado?**: Verifica se o cliente já reagendou o pagamento.
+5. **Envio pelo WhatsApp**: Verifica se o cliente não reagendou, o sistema tenta enviar mensagem pelo WhatsApp.
+6. **Envio de E-mail**: O sistema tenta contato via e-mail.
+7. **Fim**: O processo é encerrado após o envio da mensagem (WhatsApp ou e-mail) ou após notificação do financeiro para atualização do cadastro do cliente.
 
 ## Estrutura do Projeto
 
